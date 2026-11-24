@@ -11,3 +11,4 @@ cypress/cypress/downloads/
 /robot/output.xml
 /robot/selenium-screenshot-*.png
 /robot/qp01-step*.png
+/robot/results/local/
