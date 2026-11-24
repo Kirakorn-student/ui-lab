@@ -1,30 +1,32 @@
-# UI Lab ทดสอบหน้าเว็บแบบอัตโนมัติ
+# UI Lab
 
-แบบฝึกหัดนี้ใช้ **Selenium WebDriver + Java (Part 2)** กับ **Robot Framework (Part 3)** ทดสอบหน้า Selenium Web Form และเคส QP-01 บน QuickPizza เคสนี้เริ่มจากขอพิซซ่าตามเงื่อนไข ลองให้คะแนนตอนยังไม่ได้ล็อกอิน แล้วเข้าแอดมินไปดูว่าพิซซ่าที่เพิ่งขอขึ้นในรายการจริง
+แล็บนี้ใช้ **Selenium WebDriver + Java (Part 2)** และ **Robot Framework (Part 3)** ทดสอบหน้าแบบฟอร์มของ Selenium กับเคส QP-01 บน QuickPizza เคสนี้เริ่มจากขอพิซซ่าตามเงื่อนไข ลองให้คะแนนก่อนล็อกอิน แล้วเข้าไปดูว่าหน้าแอดมินมีพิซซ่ารายการเดียวกันหรือไม่
 
-## เตรียมก่อนรัน
+## เตรียม ChromeDriver
 
-ติดตั้ง Google Chrome และดาวน์โหลด [ChromeDriver](https://googlechromelabs.github.io/chrome-for-testing/) ที่ตรงกับ Chrome ในเครื่อง เก็บ ChromeDriver ไว้นอก repository แล้วตั้ง `CHROMEDRIVER` ให้ชี้ไปที่ไฟล์นั้น ตัวอย่างบน PowerShell
+ดาวน์โหลด [ChromeDriver](https://googlechromelabs.github.io/chrome-for-testing/) รุ่นที่ตรงกับ Chrome ในเครื่อง แล้วแตกไฟล์ไว้นอกโฟลเดอร์งาน ตั้งค่า `CHROMEDRIVER` ใน PowerShell ที่จะใช้รัน โดยแก้ตำแหน่งไฟล์ให้ตรงกับเครื่อง
 
 ```powershell
 $env:CHROMEDRIVER = 'C:\drivers\chromedriver-win64\chromedriver.exe'
 ```
 
-แก้พาธให้ตรงกับเครื่อง ตั้งค่าในหน้าต่าง PowerShell ที่จะใช้รันเทสต์
-
 ## Part 2 Selenium WebDriver + Java
 
-โฟลเดอร์ `selenium-java/` มีเทสต์ JUnit สำหรับหน้าแบบฟอร์ม การรอกล่องสีแดง และ QP-01 ทั้งแบบเขียน locator ในเทสต์กับแบบใช้ Page Object เตรียม JDK 21 ขึ้นไปและ Maven แล้วเปิด PowerShell ในโฟลเดอร์นี้เพื่อรันทั้งชุด
+ใน `selenium-java/` มีเทสต์ JUnit สำหรับเช็กชื่อแท็บ ส่งแบบฟอร์ม รอกล่องสีแดง และรัน QP-01 สองแบบ แบบแรกเขียนตำแหน่งของปุ่มและช่องกรอกไว้ในเทสต์ ส่วนอีกแบบแยกไว้ใน `HomePage` กับ `AdminPage`
+
+ใช้ JDK 21 ขึ้นไปกับ Maven แล้วเปิด PowerShell ในโฟลเดอร์ `selenium-java/` เพื่อรันทั้งห้าเทสต์
 
 ```powershell
 mvn test '-Dheadless=true'
 ```
 
-ดูภาพ QP-01 ใน [screenshots](selenium-java/screenshots/) และรายงาน JUnit ของรอบที่สองใน [reports](selenium-java/reports/)
+ดู [ผลจาก Maven สองรอบ](selenium-java/reports/maven-runs.txt), [รายงาน JUnit รอบสอง](selenium-java/reports/uilab.QP01PageObjectTest.txt) และ [ภาพของ QP-01](selenium-java/screenshots/)
 
 ## Part 3 Robot Framework
 
-โฟลเดอร์ `robot/` มีเทสต์หน้าแบบฟอร์มและ QP-01 ส่วนคำสั่งย่อยกับ locator ของ QuickPizza อยู่ใน `resources/quickpizza.resource` เตรียม Python 3.10 ขึ้นไป แล้วเปิด PowerShell ในโฟลเดอร์ `robot/` และติดตั้งไลบรารีครั้งแรก
+ใน `robot/` มีเทสต์เช็กชื่อแท็บ ส่งแบบฟอร์ม และรัน QP-01 คำสั่งที่ใช้กับ QuickPizza รวมอยู่ใน `resources/quickpizza.resource` จึงอ่านไฟล์เทสต์ตามขั้นของเคสได้เลย
+
+ใช้ Python 3.10 ขึ้นไป เปิด PowerShell ในโฟลเดอร์ `robot/` แล้วติดตั้งไลบรารีครั้งแรก
 
 ```powershell
 python -m venv .venv
@@ -37,6 +39,6 @@ python -m venv .venv
 .\.venv\Scripts\python.exe -m robot -d results/local -v BROWSER:headlesschrome first.robot web_form.robot pizza_scenario.robot
 ```
 
-หลักฐาน QP-01 สองรอบอยู่ใน [run1](robot/results/run1/) และ [run2](robot/results/run2/) แต่ละโฟลเดอร์มีรายงาน สี่ภาพ และไฟล์ผลการรัน เปิด `log.html` ในเบราว์เซอร์แล้วกดดูรายละเอียดทีละขั้นได้
+หลักฐาน QP-01 อยู่ใน [รอบแรก](robot/results/run1/) และ [รอบที่สอง](robot/results/run2/) เปิด `log.html` จากโฟลเดอร์ในเครื่องเพื่อดูแต่ละขั้นพร้อมภาพประกอบ
 
-ผลการลองด้วยมือ ผลการรันทั้งสองเครื่องมือ และคำตอบ Part B อยู่ใน [RESULTS.md](RESULTS.md)
+ตารางผลรันด้วยมือ ผลของแต่ละรอบ และคำตอบท้ายแล็บอยู่ใน [RESULTS.md](RESULTS.md)
